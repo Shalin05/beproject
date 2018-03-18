@@ -9,30 +9,31 @@ from spherical_dictionary_learning import spherical_kmeans
 from scipy.sparse import csr_matrix
 import os
 import pandas as pd
+from spherical_dictionary_learning import ZCA_whitening
 
 X=numpy.zeros([60, 0])
 
-classes=['glass','gunshots','screams']
+classes=['siren','gunshot','horn']
 
 ######no of audio files in the above classes##########
-no_of_audio=[208,208,208]
+no_of_audio=[250,233,250]
 
 
 dimensions=[]
 #####global dictionary #####
 dictionary=numpy.zeros([60,0])
-
+dim={}
 ######global input######
 inp=numpy.zeros([60,0])
 
 #####no of clusters for dictionary learning#######
-clusters =200
+clusters =100
 print(str(clusters)+"clusters")
 
 #### change path #######
-project_path="/home/raunak/Downloads/MIVIA_DB4_dist/final data/training/"
+project_path="/home/raunak/PycharmProjects/beproject/dataset/train/"
 for number in classes:
-
+    dim[number]=0
     g=project_path+number
     directory=os.fsencode(g)
     for file in os.listdir(directory):
@@ -55,12 +56,19 @@ for number in classes:
 
         Spect=feature.melspectrogram(S=sgn,n_mels=60)
         dimensions.append(numpy.shape(Spect)[1])
+        dim[number]+=numpy.shape(Spect)[1]
         X = numpy.column_stack((X, Spect))
 
-    X, D, c = spherical_kmeans(X, clusters, 10)
-    print(str(number)+" hua")
+    inp = numpy.column_stack((inp, X))
+
+#X, U, S, X_mean, X_var = ZCA_whitening(inp)
+
+a=0
+for i in dim.values():
+    X=inp[:,a:a+i]
+    a=a+i
+    X, D, c = spherical_kmeans(X, clusters, 50)
     dictionary = numpy.column_stack((dictionary, D))
-    inp= numpy.column_stack((inp, X))
 
 
 #pkl_file = open('/home/raunak/PycharmProjects/beproject/dictionary.p', 'rb')
@@ -82,7 +90,7 @@ test_dimensions=[]
 test_inp=numpy.zeros([60,0])
 
 ###read test data#############
-project_path="/home/raunak/Downloads/MIVIA_DB4_dist/extracted_data/testing/8/"
+project_path="/home/raunak/PycharmProjects/beproject/dataset/test/"
 for number in classes:
     g = project_path+number
     directory = os.fsencode(g)
@@ -108,6 +116,7 @@ for number in classes:
         X = numpy.column_stack((X, Spect))
 
 print(str(number) + " hua")
+#ZCA_whitening(X,U, S, X_mean, X_var)
 test_inp = numpy.column_stack((inp, X))
 
 
@@ -157,8 +166,7 @@ for i in range(no_of_classes):
     for j in range(no_of_audio[i]):
         output.append(i)
 
-no_of_audio_test=[144,376,112]
-no_of_audio_test=[18,47,14]
+no_of_audio_test=[50,50,45]
 test_output=[]
 for i in range(no_of_classes):
     for j in range(no_of_audio_test[i]):

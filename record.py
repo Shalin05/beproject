@@ -1,17 +1,20 @@
 from array import array
+
+import librosa
 import pyaudio
 import wave
 import audioop
 import matplotlib.pyplot as plt
 import numpy as np
 
+import util
 
 path= "/home/raunak/Desktop/output.wav"
 
 
 count=0
 CHUNK =1024
-FORMAT = pyaudio .paInt16
+FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 RECORD_SECONDS = 2
@@ -49,23 +52,13 @@ while True:
 
         f.writeframes(b''.join(frames))
         f.close()
-        car = wave.open(path, 'r')
-        '''print("get samplewidth"+str(car.getsampwidth()))
-        print(" get framerate"+str(car.getframerate()))
-        print(" getnfrmaes"+str(car.getnframes()))'''
-        sign = car.readframes(car.getnframes())
-        sign = np.fromstring(sign, 'Int16')
-        fs = car.getframerate()
-        N = car.getnframes()
-        # print(sign)
-        #plt.subplot(1, 2, 1)
-        Time = np.linspace(0, len(sign) / fs, num=len(sign))
+        inp=b''.join(frames)
+        D = librosa.stft(inp)
+        Spect = librosa.feature.melspectrogram(S=D, n_mels=60)
 
-        plt.xlabel("Time (seconds)")
-        plt.title("Time domain representation")
-        plt.ylabel("Amplitude")
-        plt.plot(Time, sign)
-        #plt.show()
+        c=util.encoding(Spect)
+        predict=rf.predict(c)
+
         break
     else:
         print("no audio")

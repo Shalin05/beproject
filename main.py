@@ -5,7 +5,7 @@ import pandas as pd
 import pickle
 from util import read_data, encoding,pooling, create_output,spherical_kmeans,ZCA_whitening
 
-classes = ['siren','gunshot','horn']
+classes = ['siren','gunshot','scream']
 ######no of audio files in the above classes##########
 no_of_audio = [250,233,250]
 
@@ -64,7 +64,7 @@ print("test max pooling ho gaya")
 no_of_classes = len(classes)
 output = create_output(no_of_audio,no_of_classes)
 
-no_of_audio_test = [50,50,45]
+no_of_audio_test = [50,50,50]
 test_output = create_output(no_of_audio_test,no_of_classes)
 
 feat_variables = pd.DataFrame(new_array.T)
@@ -80,6 +80,11 @@ rf.fit(feat_variables,expected_output)
 prediction_output = rf.predict(feat_variables)
 print("Training")
 print(accuracy_score(expected_output, prediction_output))
+confusion = confusion_matrix(expected_output.as_matrix(), prediction_output)
+df_cm = pd.DataFrame(confusion, range(no_of_classes),range(no_of_classes))
+print(df_cm)
+
+
 
 print("Testing")
 prediction = rf.predict(feat_variables_test)

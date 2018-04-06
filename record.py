@@ -18,7 +18,7 @@ count = 0
 CHUNK = 2048
 FORMAT = pyaudio.paFloat32
 CHANNELS = 1
-classes = ['siren','gunshot','horn']
+classes = ['siren','gunshot','scream']
 clusters = 30
 RATE = 32000
 #WAVE_OUTPUT_FILENAME = "output.wav"
@@ -74,7 +74,7 @@ while True:
             print(rms)
             if rms < threshold:
                 count+=1
-            if count > 5:
+            if count > 2:
                 break
 
             out_data = np.row_stack((out_data, output))

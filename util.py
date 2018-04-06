@@ -20,7 +20,9 @@ def read_data(project_path,classes):
         directory=os.fsencode(g)
         for file in os.listdir(directory):
             i=os.fsdecode(file)
-            data_lib=librosa.load(g+"/"+i, sr=44100)
+            data_lib=librosa.load(g+"/"+i, sr=32000)
+            print("max = "+str(np.max(data_lib[0])))
+            print("min = " + str(np.min(data_lib[0])))
             D = librosa.stft(data_lib[0])
             Spect=feature.melspectrogram(S=D,n_mels=60)
             dimensions.append(np.shape(Spect)[1])
